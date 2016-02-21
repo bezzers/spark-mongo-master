@@ -11,11 +11,7 @@ RUN git clone https://github.com/mongodb/mongo-hadoop.git
 RUN cd /mongo-hadoop && ./gradlew jar
 
 # Create a file to run as the entrypoint which passes a spark master argument to docker run through
-RUN echo /usr/spark/bin/spark-class org.apache.spark.deploy.master.Master \
-	--jars /mongo-hadoop/spark/build/libs/mongo-hadoop-spark-1.5.0-rc1-SNAPSHOT.jar \
-	--driver-class-path /mongo-hadoop/spark/build/libs/mongo-hadoop-spark-1.5.0-rc1-SNAPSHOT.jar \
-	 >> /run.sh
-
+RUN echo /usr/spark/bin/spark-class org.apache.spark.deploy.master.Master >> /run.sh
 RUN chmod +x /run.sh
 
 ENTRYPOINT ["/bin/bash","/run.sh"]
