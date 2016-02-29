@@ -7,16 +7,14 @@ RUN apt-get install -y python-dev python-pip python-numpy python-scipy python-pa
 RUN apt-get install -y git-all
 
 # Download the mongo-hadoop connector library and build it
-RUN cd /
 RUN git clone https://github.com/mongodb/mongo-hadoop.git
-RUN cd /mongo-hadoop
-RUN ./gradlew jar
+RUN cd mongo-hadoop && ./gradlew jar
 
 # Create a file to run as the entrypoint which passes a spark master argument to docker run through
 # This line writes the SPARK environment variables into a spark configuration file
 RUN echo 'env | grep SPARK | awk '\''{print "export \"" $0 "\""}'\'' > /usr/spark/conf/spark-env.sh' > run.sh
 # This line edits the dns resolvers file to point to the docker bridge and consul dns server
-RUN 'echo nameserver 172.17.42.1 > /etc/resolv.conf && echo search service.consul node.consul >> /etc/resolv.conf' >> run.sh
+RUN echo 'echo nameserver 172.17.42.1 > /etc/resolv.conf && echo search service.consul node.consul >> /etc/resolv.conf' >> run.sh
 # This line removes anything registered in /etc/hosts on the docker network - not needed when we run with --net=host
 #RUN echo 'cat /etc/hosts | grep -v 172.17 > tmphosts && cat tmphosts > /etc/hosts && rm tmphosts' >> run.sh
 # This line starts the master passing in the options we sent with docker run
